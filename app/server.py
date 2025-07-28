@@ -1,4 +1,5 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, Path
+from bson import ObjectId
 
 # custom imports 
 from .utils.file import save_file
@@ -11,6 +12,20 @@ app = FastAPI()
 @app.get("/")
 def hello():
     return {"message": "Hello, World!"}
+
+@app.get("/{id}")
+async def get_file(id: str = Path(..., description="The ID of the file to retrieve")):
+    db_file = await files_collection.find_one({"_id": ObjectId(id)})
+
+    if not db_file:
+        return {"error": "File not found"}
+
+    return {
+        "_id": str(db_file["_id"]),
+        "name": db_file["name"],
+        "status": db_file["status"],
+        "result": db_file.get("result", None),
+    }
 
 @app.post("/upload")
 async def file_upload(
