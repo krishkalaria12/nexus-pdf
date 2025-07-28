@@ -1,7 +1,7 @@
 [project]
 name = "nexus-pdf"
 version = "0.1.0"
-description = "Add your description here"
+description = "A modular PDF processing service that converts PDFs to images and analyzes them with AI"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -13,4 +13,9 @@ dependencies = [
     "python-dotenv>=1.1.1",
     "rq>=2.4.1",
     "uvicorn>=0.35.0",
+    "redis>=5.0.0",
+    "pydantic>=2.0.0",
+    "python-multipart>=0.0.6",
+    "Pillow>=10.0.0",
+    "poppler-utils>=23.0.0",
 ]
