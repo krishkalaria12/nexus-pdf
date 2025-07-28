@@ -3,6 +3,8 @@ from fastapi import FastAPI, UploadFile
 # custom imports 
 from .utils.file import save_file
 from .db.collections.files import files_collection, FileSchema
+from app.queue.queue import queue
+from app.queue.workers import process_file
 
 app = FastAPI()
 
@@ -17,7 +19,7 @@ async def file_upload(
     db_file = await files_collection.insert_one(
         document=FileSchema(
             name=file.filename,
-            status="saving"
+            status="saving",
         )
     )
 
@@ -25,6 +27,9 @@ async def file_upload(
 
     file_path = f"/mnt/uploads/{db_file_id}-{file.filename}"
     await save_file(await file.read(), file_path)
+
+    # push to queue
+    job = queue.enqueue(process_file, db_file_id)
 
     await files_collection.update_one(
         {
