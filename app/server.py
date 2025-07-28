@@ -29,7 +29,7 @@ async def file_upload(
     await save_file(await file.read(), file_path)
 
     # push to queue
-    job = queue.enqueue(process_file, db_file_id)
+    job = queue.enqueue(process_file(id, file_path), db_file_id)
 
     await files_collection.update_one(
         {
